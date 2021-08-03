@@ -4,12 +4,12 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 //CustomRenderPipelineAsset是一种资源类型，CreateAssetMenu属性可以告诉unity自己是一种asset类型
-[CreateAssetMenu]
+[CreateAssetMenu(menuName = "Rendering/Custom Render Pipeline")]
 public class CustomRenderPipelineAsset : RenderPipelineAsset
 {
     protected override RenderPipeline CreatePipeline()
     {
-        return null;
+        return new CustomRenderPipeline();
     }
 
 }
