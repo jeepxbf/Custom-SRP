@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
-
+using UnityEngine.Profiling;
 //作为CameraRenderer的分类 ，release版本的时候不打进包里
 //对于错误的材质，我们只在编辑器中调试
 partial class CameraRenderer
@@ -9,7 +9,11 @@ partial class CameraRenderer
     partial void DrawUnsupportedShaders();
     partial void DrawGizmos();
     partial void PrepareForSceneWindow();
+    partial void PrepareBuffer();
+
 #if UNITY_EDITOR
+
+    string SampleName { get; set; }
     //其他的shader passes 也需要被支持 否则会有物体绘制不出来
     static ShaderTagId[] legacyShaderTagIds =
     {
@@ -60,6 +64,16 @@ partial class CameraRenderer
         }
     }
 
+    //显示在帧调试器里的名字
+    partial void PrepareBuffer()
+    {
+        Profiler.BeginSample("Editor Only");
+        buffer.name = SampleName = camera.name;
+        Profiler.EndSample();
+    }
+#else
+    const string SampleName = bufferName;
 #endif
+
 }
 

@@ -24,6 +24,8 @@ public partial class CameraRenderer
         this.context = context;
         this.camera = camera;
 
+
+        PrepareBuffer();
         PrepareForSceneWindow(); //把UI添加到scene窗口下
         if(!Cull())
         {
@@ -55,7 +57,7 @@ public partial class CameraRenderer
 
     void Submit()
     {
-        buffer.EndSample(bufferName);
+        buffer.EndSample(SampleName);
         ExecuteBuffer();
         context.Submit();
     }
@@ -69,8 +71,15 @@ public partial class CameraRenderer
         节省很多代码量。
          */
         context.SetupCameraProperties(camera);
-        buffer.ClearRenderTarget(true, true, Color.clear);
-        buffer.BeginSample(bufferName); //用于性能分析采样        
+        //CameraClearFlag枚举定义了四个值。从1到4，它们是Skybox，Color，Depth和Nothing\
+        //它实际上不是一个独立的标志值，但表示清除量递减。除最后一种情况外，其他情况都必须清除深度缓冲区，因此，标志值最多的设置是Depth。
+        CameraClearFlags flags = camera.clearFlags;
+        //参数 是否清除深度值 是否清除颜色值 清除后的颜色 清除后的深度 默认是1
+        //
+        buffer.ClearRenderTarget(flags<=CameraClearFlags.Depth, 
+            flags==CameraClearFlags.Color, 
+            flags==CameraClearFlags.Color?camera.backgroundColor:Color.clear);
+        buffer.BeginSample(SampleName); //用于性能分析采样        
         ExecuteBuffer();
         
     }
